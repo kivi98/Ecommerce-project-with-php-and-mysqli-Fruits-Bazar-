@@ -506,27 +506,29 @@ class  adminback
     }
 
     function place_order($data)
-    {
-        $user_id = mysqli_real_escape_string($this->connection, $data['user_id']);
-        $product_name = mysqli_real_escape_string($this->connection, $data['product_name']);
-        $product_item = mysqli_real_escape_string($this->connection, $data['product_item']);
-        $quantity = mysqli_real_escape_string($this->connection, $data['quan']);
-        $amount = mysqli_real_escape_string($this->connection, $data['amount']);
-        $order_status = mysqli_real_escape_string($this->connection, $data['order_status']);
-        $trans_id = mysqli_real_escape_string($this->connection, $data['txid']);
-        $mobile = mysqli_real_escape_string($this->connection, $data['shipping_Mobile']);
+{
+    $connection = $this->connection;
+    $user_id = filter_var($data['user_id'], FILTER_SANITIZE_NUMBER_INT);
+    $product_name = filter_var($data['product_name'], FILTER_SANITIZE_STRING);
+    $product_item = filter_var($data['product_item'], FILTER_SANITIZE_NUMBER_INT);
+    $quantity = filter_var($data['quan'], FILTER_SANITIZE_NUMBER_INT);
+    $amount = filter_var($data['amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    $order_status = filter_var($data['order_status'], FILTER_SANITIZE_NUMBER_INT);
+    $trans_id = filter_var($data['txid'], FILTER_SANITIZE_STRING);
+    $mobile = filter_var($data['shipping_Mobile'], FILTER_SANITIZE_STRING);
+    $shiping = filter_var($data['shiping'], FILTER_SANITIZE_STRING);
 
-        $shiping = mysqli_real_escape_string($this->connection, $data['shiping']);
-
-
-        $query = "INSERT INTO `order_details`(`user_id`, `product_name`, `product_item`, `amount`, `order_status`, `trans_id`,`Shipping_mobile`, `shiping`, `order_time`, `order_date`) VALUES ( $user_id,'$product_name',$product_item, $amount, $order_status,'$trans_id',$mobile,'$shiping',NOW(), CURDATE())";
-
-        if (mysqli_query($this->connection, $query)) {
-
-            unset($_SESSION['cart']);
-            header("location:exist_order.php");
-        }
+    $query = "INSERT INTO `order_details`(`user_id`, `product_name`, `product_item`, `amount`, `order_status`, `trans_id`,`Shipping_mobile`, `shiping`, `order_time`, `order_date`) VALUES ( ?,'?',?, ?,'?','?','?',"
+             . "?,NOW(), CURDATE())";
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, 'isissss', $user_id, $product_name, $product_item, $amount, $order_status, $trans_id, $mobile, $shiping);
+    if (mysqli_stmt_execute($stmt)) {
+        unset($_SESSION['cart']);
+        header("Location: exist_order.php");
+        exit;
     }
+}
+
 
 
     function confirm_order($post, $session){

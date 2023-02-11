@@ -9,27 +9,23 @@
  
  if(isset($_POST['action'])){
     if($_POST['action']=='load_allorder'){
-        $date = $_POST['did'];
+        $date = mysqli_real_escape_string($connection, $_POST['did']);
 
+        $dayquery = "SELECT * FROM `all_order_info` WHERE `order_date` BETWEEN '".$date."' and CURDATE();";
 
-        $dayquery = "SELECT * FROM `all_order_info` WHERE `order_date` BETWEEN '$date' and CURDATE();";
-
-       
-       $row = mysqli_query($connection, $dayquery);
-       $result = mysqli_num_rows($row);
-       echo $result;
-
+        $row = mysqli_query($connection, $dayquery);
+        $result = mysqli_num_rows($row);
+        echo $result;
     }
 }
 
+
 if(isset($_POST['action'])){
     if($_POST['action']=='load_allsell'){
-        $date = $_POST['did'];
+        $date = mysqli_real_escape_string($connection, $_POST['did']) ;
 
+        $sumQuery = "SELECT SUM(`amount`) AS `sum` FROM `all_order_info` WHERE `order_date` BETWEEN '$date' and CURDATE();";
 
-    $sumQuery = "SELECT SUM(`amount`) AS `sum` FROM `all_order_info` WHERE `order_date` BETWEEN '$date' and CURDATE();";
-
-       
        $sum_row = mysqli_query($connection, $sumQuery);
        $asos = mysqli_fetch_assoc($sum_row);
        echo $asos['sum'];
@@ -39,7 +35,7 @@ if(isset($_POST['action'])){
 
 if(isset($_POST['action'])){
     if($_POST['action']=='load_allcustomer'){
-        $date = $_POST['did'];
+        $date = mysqli_real_escape_string($connection, $_POST['did']);
 
 
         $cus_query = "SELECT * FROM `all_order_info` WHERE `order_date` BETWEEN '$date' and CURDATE() GROUP BY `customer_name`;";
@@ -55,7 +51,7 @@ if(isset($_POST['action'])){
 
 if(isset($_POST['action'])){
     if($_POST['action']=='load_delivered_order'){
-        $date = $_POST['did'];
+        $date = mysqli_real_escape_string($connection, $_POST['did']);
 
 
         $deli_query = "SELECT * FROM `all_order_info` WHERE (`order_date` BETWEEN '$date' and CURDATE()) AND `order_status`=2";
@@ -70,7 +66,7 @@ if(isset($_POST['action'])){
 
 if(isset($_POST['action'])){
     if($_POST['action']=='load_processing_order'){
-        $date = $_POST['did'];
+        $date = mysqli_real_escape_string($connection, $_POST['did']);
 
 
         $pros_query = "SELECT * FROM `all_order_info` WHERE (`order_date` BETWEEN '$date' and CURDATE()) AND `order_status`=1";
@@ -85,7 +81,7 @@ if(isset($_POST['action'])){
 
 if(isset($_POST['action'])){
     if($_POST['action']=='load_pending_order'){
-        $date = $_POST['did'];
+        $date = mysqli_real_escape_string($connection, $_POST['did']);
 
 
         $pen_query = "SELECT * FROM `all_order_info` WHERE (`order_date` BETWEEN '$date' and CURDATE()) AND `order_status`=0";
@@ -100,7 +96,7 @@ if(isset($_POST['action'])){
 
 if(isset($_POST['action'])){
     if($_POST['action']=='sell_by_product'){
-        $date = $_POST['did'];
+        $date = mysqli_real_escape_string($connection, $_POST['did']);
 
 
         $sell_query = "SELECT `order_id`, `product_name`, SUM(`pdt_quantity`), SUM(`amount`) FROM all_order_info WHERE (`order_date` BETWEEN '$date' and CURDATE()) GROUP BY `product_name` ORDER BY SUM(`pdt_quantity`) DESC";
@@ -127,7 +123,7 @@ if(isset($_POST['action'])){
 
 if(isset($_POST['action'])){
     if($_POST['action']=='sell_by_customer'){
-        $date = $_POST['did'];
+        $date = mysqli_real_escape_string($connection, $_POST['did']);
 
 
         $sell_query = "SELECT `customer_name`, SUM(`pdt_quantity`), SUM(`amount`) FROM all_order_info WHERE (`order_date` BETWEEN '$date' and CURDATE()) GROUP BY `customer_name` ORDER BY SUM(`amount`) DESC;";
