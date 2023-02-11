@@ -74,7 +74,7 @@ include_once("includes/head.php");
             <div class="hero-section hero-background">
                 <h1 class="page-title">
                     <?php
-                   echo $ctg_info['ctg_name'];
+                   echo htmlspecialchars($ctg_info['ctg_name'], ENT_QUOTES, 'UTF-8') ;
                     ?>
                 </h1>
             </div>
@@ -89,7 +89,7 @@ include_once("includes/head.php");
                         <li class="nav-item"><span class="current-page">
 
                         <?php
-                   echo $ctg_info['ctg_name'];
+                   echo htmlspecialchars($ctg_info['ctg_name'], ENT_QUOTES, 'UTF-8') ;
                     ?>
                             </span></li>
                     </ul>

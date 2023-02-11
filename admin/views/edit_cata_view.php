@@ -25,12 +25,12 @@
 
     <div class="form-group">
         <label for="u_ctg_name">Catagory Name</label>
-        <input type="text" name="u_ctg_name" class="form-control" value="<?php echo $cata['ctg_name'] ?>">
+        <input type="text" name="u_ctg_name" class="form-control" value="<?php echo htmlspecialchars($cata['ctg_name'], ENT_QUOTES, 'UTF-8') ?>">
     </div>
 
     <div class="form-group">
         <label for="u_ctg_des">Catagory descriptioon</label>
-        <input type="text" name="u_ctg_des" class="form-control"  value="<?php echo $cata['ctg_des'] ?>">
+        <input type="text" name="u_ctg_des" class="form-control"  value="<?php echo htmlspecialchars($cata['ctg_des'], ENT_QUOTES, 'UTF-8') ?>">
     </div>
 
     <div class="form-group">
@@ -41,7 +41,7 @@
         </select>
     </div>
 
-    <input type="hidden" name="u_ctg_id" value="<?php echo $cata['ctg_id'] ?>" >
+    <input type="hidden" name="u_ctg_id" value="<?php echo htmlspecialchars($cata['ctg_id'], ENT_QUOTES, 'UTF-8') ?>" >
 
     <input type="submit" value="Update Catagory" name="update_ctg" class="btn btn-primary" >
 

@@ -28,17 +28,17 @@
 ?>
 </h5> <br> <br>
     
-        <h5>User Id: <?php echo $row['user_id'] ?> </h5> <br>
-        <h5>User Name: <?php echo $row['user_name'] ?> </h5> <br>
-        <h5>Product Id: <?php echo $row['pdt_id'] ?> </h5> <br>
+        <h5>User Id: <?php echo htmlspecialchars($row['user_id'], ENT_QUOTES, 'UTF-8'); ?> </h5> <br>
+        <h5>User Name: <?php echo htmlspecialchars($row['user_name'], ENT_QUOTES, 'UTF-8' ) ?> </h5> <br>
+        <h5>Product Id: <?php echo htmlspecialchars($row['pdt_id'], ENT_QUOTES, 'UTF-8' ) ?> </h5> <br>
 
         <h5>Comment: </h5> <br>
         
    
 
     <div class="form-group">
-        <input type="hidden" name="cmt_id" value="<?php echo $row['id'] ?>">
-        <textarea name="u_comment" id="" cols="30" rows="10"><?php echo $row['comment'] ?></textarea>
+        <input type="hidden" name="cmt_id" value="<?php echo htmlspecialchars($row['id'], ENT_QUOTES, 'UTF-8' ) ?>">
+        <textarea name="u_comment" id="" cols="30" rows="10"><?php echo htmlspecialchars($row['comment'], ENT_QUOTES, 'UTF-8') ?></textarea>
     </div>
 
     <div class="form-group">

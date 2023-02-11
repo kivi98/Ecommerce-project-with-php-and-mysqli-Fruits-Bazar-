@@ -28,23 +28,23 @@ ini_set("display_erros", "Off");
 <form action="" method="post" enctype="multipart/form-data" class="form">
     <div class="form-group">
         <label for="pdt_name">Product Name</label>
-        <input type="text" name="u_pdt_name" class="form-control" value="<?php echo $pdt['pdt_name'] ?>" >
+        <input type="text" name="u_pdt_name" class="form-control" value="<?php echo htmlspecialchars($pdt['pdt_name'], ENT_QUOTES, 'UTF-8') ?>" >
     </div>
 
-    <input type="hidden" name="pdt_id" value="<?php echo $pdt['pdt_id'] ?>">
+    <input type="hidden" name="pdt_id" value="<?php echo $pdt['pdt_id'], ENT_QUOTES, 'UTF-8' ?>">
     <div class="form-group">
         <label for="pdt_price">Product Price</label>
-        <input type="text" name="u_pdt_price" class="form-control" value="<?php echo $pdt['pdt_price'] ?>">
+        <input type="text" name="u_pdt_price" class="form-control" value="<?php echo htmlspecialchars($pdt['pdt_price'], ENT_QUOTES, 'UTF-8') ?>">
     </div>
 
     <div class="form-group">
         <label for="pdt_des">Product Description</label>
-        <textarea name="u_pdt_des" cols="30" rows="10" class="form-control" ><?php echo $pdt['pdt_des']?> </textarea>
+        <textarea name="u_pdt_des" cols="30" rows="10" class="form-control" ><?php echo htmlspecialchars($pdt['pdt_des'], ENT_QUOTES, 'UTF-8')?> </textarea>
     </div>
 
     <div class="form-group">
         <label for="pdt_stock">Product Stock</label>
-        <input type="number" name="pdt_stock" class="form-control" max='30' min='1' value="<?php echo $pdt['product_stock']?>">
+        <input type="number" name="pdt_stock" class="form-control" max='30' min='1' value="<?php echo htmlspecialchars($pdt['product_stock'], ENT_QUOTES, 'UTF-8')?>">
     </div>
 
 
@@ -54,7 +54,7 @@ ini_set("display_erros", "Off");
         <option value="">Select a Catagory</option>
 
         <?php while($cata = mysqli_fetch_assoc($cata_info)){ ?>
-        <option value="<?php echo $cata['ctg_id'] ?>"  ><?php echo $cata['ctg_name'] ?></option>
+        <option value="<?php echo $cata['ctg_id'] ?>"  ><?php echo htmlspecialchars($cata['ctg_name'], ENT_QUOTES, 'UTF-8') ?></option>
 
         <?php }?>
         </select>
@@ -65,7 +65,7 @@ ini_set("display_erros", "Off");
     <div class="form-group">
         <label for="pdt_img">Product Image</label>
         <div class="mb-3">
-        <img src="uploads/<?php echo $pdt['pdt_img']?>" style="width: 80px;" >
+        <img src="uploads/<?php echo htmlspecialchars($pdt['pdt_img'], ENT_QUOTES, 'UTF-8')?>" style="width: 80px;" >
     </div>
         <input type="file" name="u_pdt_img" class="form-control">
     </div>

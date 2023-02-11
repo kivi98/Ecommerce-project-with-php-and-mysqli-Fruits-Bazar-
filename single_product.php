@@ -418,12 +418,12 @@ include_once("includes/head.php");
                                                             <div class="comment-content col-lg-8 col-md-9 col-sm-8 col-xs-12">
 
                                                             <p class="comment-in"><span class="post-name"></span>
-                                                            <span class="post-date"><?php echo $cmtinfo['comment_date'] ?></span></p>
+                                                            <span class="post-date"><?php echo htmlspecialchars($cmtinfo['comment_date'], ENT_QUOTES, 'UTF-8') ?></span></p>
                                                               
                                                                 
-                                                                <p class="author">by: <b><?php echo $cmtinfo['user_name'] ?></b></p>
+                                                                <p class="author">by: <b><?php echo htmlspecialchars($cmtinfo['user_name'], ENT_QUOTES, 'UTF-8') ?></b></p>
 
-                                                                <p class="comment-text"><?php echo $cmtinfo['comment'] ?>.</p>
+                                                                <p class="comment-text"><?php echo htmlspecialchars($cmtinfo['comment'], ENT_QUOTES, 'UTF-8') ?>.</p>
 
                                                             </div>
                                                             <div class="comment-review-form col-lg-3 col-lg-offset-1 col-md-3 col-sm-4 col-xs-12">
@@ -478,16 +478,16 @@ include_once("includes/head.php");
                                     <li class="product-item">
                                         <div class="contain-product layout-default">
                                             <div class="product-thumb">
-                                                <a href="single_product.php?status=singleproduct&&id=<?php echo $r_pro['pdt_id'] ?>" class="link-to-product">
-                                                    <img src="admin/uploads/<?php echo $r_pro['pdt_img'] ?>" alt="dd" width="270" height="270" class="product-thumnail">
+                                                <a href="single_product.php?status=singleproduct&&id=<?php echo htmlspecialchars($r_pro['pdt_id'], ENT_QUOTES, 'UTF-8') ?>" class="link-to-product">
+                                                    <img src="admin/uploads/<?php echo htmlspecialchars($r_pro['pdt_img'], ENT_QUOTES, 'UTF-8') ?>" alt="dd" width="270" height="270" class="product-thumnail">
                                                 </a>
                                             </div>
                                             <div class="info">
-                                                <b class="categories"><?php echo $r_pro['ctg_name'] ?></b>
-                                                <h4 class="product-title"><a href="single_product.php?status=singleproduct&&id=<?php echo $r_pro['pdt_id'] ?>" class="pr-name"> <?php echo $r_pro['pdt_name'] ?> </a></h4>
+                                                <b class="categories"><?php echo htmlspecialchars($r_pro['ctg_name'], ENT_QUOTES, 'UTF-8') ?></b>
+                                                <h4 class="product-title"><a href="single_product.php?status=singleproduct&&id=<?php echo htmlentities($r_pro['pdt_id'], ENT_QUOTES, 'UTF-8') ?>" class="pr-name"> <?php echo htmlspecialchars($r_pro['pdt_name'], ENT_QUOTES, 'UTF-8') ?> </a></h4>
                                                 <div class="price">
                                                     <ins><span class="price-amount"><span class="currencySymbol">$</span>
-                                                            <?php echo $r_pro['pdt_price'] ?>
+                                                            <?php echo htmlspecialchars($r_pro['pdt_price'], ENT_QUOTES, 'UTF-8') ?>
                                                         </span></ins>
 
                                                 </div>

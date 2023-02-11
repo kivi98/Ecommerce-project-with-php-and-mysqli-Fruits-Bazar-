@@ -27,34 +27,32 @@ if (isset($_POST['update_slider_btn'])) {
 <form action="" method="post" enctype="multipart/form-data">
 
 
-    <h4>Slider No: <?php echo $slide['slider_id'] ?></h4>
-
-    <input type="hidden" value="<?php echo $slide['slider_id'] ?>" name="slider_id">
-
-
+<h4>Slider No: <?php echo htmlspecialchars($slide['slider_id'], ENT_QUOTES, 'UTF-8'); ?></h4>
+<input type="hidden" value="<?php echo htmlspecialchars($slide['slider_id'], ENT_QUOTES, 'UTF-8'); ?>" name="slider_id">
     <div class="form-group">
         <label for="first_line">First Line</label>
-        <input type="text" name="first_line" class="form-control" value="<?php echo $slide['first_line'] ?>">
+        <input type="text" name="first_line" class="form-control" value="<?php echo htmlspecialchars($slide['first_line'], ENT_QUOTES); ?>">
+
     </div>
 
     <div class="form-group">
         <label for="second_line">Second Line</label>
-        <input type="text" name="second_line" class="form-control" value="<?php echo $slide['second_line'] ?>">
+        <input type="text" name="second_line" class="form-control" value="<?php echo htmlspecialchars($slide['second_line'], ENT_QUOTES) ?>">
     </div>
 
     <div class="form-group">
         <label for="third_line">Third Line</label>
-        <input type="text" name="third_line" class="form-control" value="<?php echo $slide['third_line'] ?>">
+        <input type="text" name="third_line" class="form-control" value="<?php echo htmlspecialchars($slide['third_line'], ENT_QUOTES)  ?>">
     </div>
 
     <div class="form-group">
         <label for="btn_left">Left Button</label>
-        <input type="text" name="btn_left" class="form-control" value="<?php echo $slide['btn_left'] ?>">
+        <input type="text" name="btn_left" class="form-control" value="<?php echo htmlspecialchars($slide['btn_left'], ENT_QUOTES)  ?>">
     </div>
 
     <div class="form-group">
         <label for="btn_right">Right Button</label>
-        <input type="text" name="btn_right" class="form-control" value="<?php echo $slide['btn_right'] ?>">
+        <input type="text" name="btn_right" class="form-control" value="<?php echo htmlspecialchars($slide['btn_right'], ENT_QUOTES ) ?>">
     </div>
 
 

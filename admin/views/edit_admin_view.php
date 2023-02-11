@@ -25,7 +25,7 @@
 <form action="" method="POST">
     <div class="form-group">
         <h4>User Email</h4>
-        <input type="email" name="u-user-email" class="form-control" value="<?php echo $admin['admin_email'] ?>" required>
+        <input type="email" name="u-user-email" class="form-control" value="<?php echo htmlspecialchars($admin['admin_email'], ENT_QUOTES, 'UTF-8'); ?>" required>
     </div>
 
     <!-- <div class="form-group">
@@ -33,7 +33,7 @@
         <input type="password" name="user_password" class="form-control" required>
     </div> -->
 
-    <input type="hidden" name="user_id" value="<?php echo $admin['admin_id'] ?>">
+    <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($admin['admin_id'], ENT_QUOTES, 'UTF-8') ?>">
 
     <div class="form-group">
         <h4>Role</h4>
