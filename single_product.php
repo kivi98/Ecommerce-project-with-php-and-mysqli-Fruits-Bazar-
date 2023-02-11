@@ -294,7 +294,10 @@ include_once("includes/head.php");
                                                     <div class="rating">
                                                         <p class="star-rating"><span class="width-80percent"></span></p>
                                                     </div>
-                                                    <p class="see-all">See all <?php echo $cmt_row?> reviews</p>
+                                                    <p class="see-all">See all <?php 
+                                                        $cmt_row = intval($cmt_row);
+                                                        echo htmlspecialchars($cmt_row, ENT_QUOTES, 'UTF-8');
+                                                    ?> reviews</p>
                                                     <ul class="options">
                                                         <li>
                                                             <div class="detail-for">
