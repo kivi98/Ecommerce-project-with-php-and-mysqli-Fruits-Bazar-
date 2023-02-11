@@ -216,21 +216,22 @@ class  adminback
         if ($pdt_img_size <= 2e+6) {
 
             if ($width < 271 && $height < 271) {
-    $pdt_name = mysqli_real_escape_string($this->connection, $pdt_name);
-    $pdt_des = mysqli_real_escape_string($this->connection, $pdt_des);
-    $pdt_img_name = mysqli_real_escape_string($this->connection, $pdt_img_name);
+                $pdt_name = mysqli_real_escape_string($this->connection, $pdt_name);
+                $pdt_des = mysqli_real_escape_string($this->connection, $pdt_des);
+                $pdt_img_name = mysqli_real_escape_string($this->connection, $pdt_img_name);
 
-    $query = "INSERT INTO `products`( `pdt_name`, `pdt_price`, `pdt_des`,`product_stock`, `pdt_ctg`, `pdt_img`, `pdt_status`) VALUES ('$pdt_name',$pdt_price,'$pdt_des',$pdt_stock,$pdt_ctg,'$pdt_img_name',$pdt_status)";
+                $query = "INSERT INTO `products`( `pdt_name`, `pdt_price`, `pdt_des`,`product_stock`, `pdt_ctg`, `pdt_img`, `pdt_status`) VALUES ('$pdt_name',$pdt_price,'$pdt_des',$pdt_stock,$pdt_ctg,'$pdt_img_name',$pdt_status)";
 
-    if (mysqli_query($this->connection, $query)) {
-        move_uploaded_file($pdt_img_tmp, "uploads/".$pdt_img_name);
-        $msg = "Product uploaded successfully";
-        return $msg;
+            if (mysqli_query($this->connection, $query)) {
+                move_uploaded_file($pdt_img_tmp, "uploads/".$pdt_img_name);
+                $msg = "Product uploaded successfully";
+            return $msg;
     }
 } else {
     $msg = "Sorry !! Pdt image max height: 271 px and width: 271 px, but you are trying {$width} px and {$height} px";
     return $msg;
 }
+
 
 
         } else {
@@ -319,25 +320,30 @@ class  adminback
         if ($img_ext == "jpg" ||  $img_ext == 'jpeg' || $img_ext == "png") {
             if ($pdt_img_size <= 2e+6) {
                
-                if($width<271 && $height<271){
-
+                if ($width < 271 && $height < 271) {
+                    $pdt_id = mysqli_real_escape_string($this->connection, $pdt_id);
+                    $pdt_name = mysqli_real_escape_string($this->connection, $pdt_name);
+                    $pdt_des = mysqli_real_escape_string($this->connection, $pdt_des);
+                    $pdt_img_name = mysqli_real_escape_string($this->connection, $pdt_img_name);
+                    $pdt_ctg = mysqli_real_escape_string($this->connection, $pdt_ctg);
+                    $pdt_price = mysqli_real_escape_string($this->connection, $pdt_price);
+                    $pdt_stock = mysqli_real_escape_string($this->connection, $pdt_stock);
+                    $pdt_status = mysqli_real_escape_string($this->connection, $pdt_status);
+                
                     $select_query = "SELECT * FROM `products` WHERE pdt_id=$pdt_id";
                     $result = mysqli_query($this->connection, $select_query);
                     $row = mysqli_fetch_assoc($result);
                     $pre_img = $row['pdt_img'];
                     unlink("uploads/".$pre_img);
-
-
-                    $query = "UPDATE `products` SET `pdt_name`=' $pdt_name',`pdt_price`='$pdt_price',`pdt_des`='$pdt_des',`pdt_ctg`='$pdt_ctg',`pdt_img`='$pdt_img_name',`product_stock`=$pdt_stock,`pdt_status`=$pdt_status WHERE pdt_id=$pdt_id";
-
-
+                
+                    $query = "UPDATE `products` SET `pdt_name`='$pdt_name', `pdt_price`='$pdt_price', `pdt_des`='$pdt_des', `pdt_ctg`='$pdt_ctg', `pdt_img`='$pdt_img_name', `product_stock`=$pdt_stock, `pdt_status`=$pdt_status WHERE pdt_id=$pdt_id";
+                
                     if (mysqli_query($this->connection, $query)) {
-
                         move_uploaded_file($pdt_img_tmp, "uploads/".$pdt_img_name);
-                        $msg = "Product Updated successfully";
+                        $msg = "Product updated successfully";
                         return $msg;
                     }
-                }else{
+                } else {
                     $msg = "Sorry !! Pdt image max height: 271 px and width: 271 px, but you are trying {$width} px and {$height} px";
                     return $msg;
                 }
