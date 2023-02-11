@@ -231,9 +231,6 @@ class  adminback
     $msg = "Sorry !! Pdt image max height: 271 px and width: 271 px, but you are trying {$width} px and {$height} px";
     return $msg;
 }
-
-
-
         } else {
             $msg = "File size should not be large 2MB";
             return $msg;
