@@ -856,7 +856,7 @@ class  adminback
 
             
             $add_msg = "Coupon added successfully";
-            return $add_msg;
+            return $add_msg; //
         }
     }
 
