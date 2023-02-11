@@ -17,28 +17,28 @@ class  adminback
         }
     }
 
-    function admin_login($data)
-    {
-        $admin_email = $data["admin_email"];
-        $admin_pass = md5($data['admin_pass']);
-
-        $query = "SELECT * FROM `admin_info` WHERE admin_email = '$admin_email' AND admin_pass = '$admin_pass'";
-
-        if (mysqli_query($this->connection, $query)) {
-            $result = mysqli_query($this->connection, $query);
-            $admin_info = mysqli_fetch_assoc($result);
-            if ($admin_info) {
-                header("location:dashborad.php");
-                session_start();
-                $_SESSION['admin_id'] = $admin_info['admin_id'];
-                $_SESSION['admin_email'] = $admin_info['admin_email'];
-                $_SESSION['role'] = $admin_info['role'];
-            } else {
-                $log_msg = "Email or password wrong";
-                return $log_msg;
-            }
+    function admin_login($data) {
+        $admin_email = mysqli_real_escape_string($this->connection, $data["admin_email"]);
+        $admin_pass = $data['admin_pass'];
+    
+        $stmt = mysqli_prepare($this->connection, "SELECT * FROM `admin_info` WHERE admin_email = ?");
+        mysqli_stmt_bind_param($stmt, "s", $admin_email);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $admin_info = mysqli_fetch_assoc($result);
+    
+        if ($admin_info && password_verify($admin_pass, $admin_info['admin_pass'])) {
+            header("location: dashboard.php");
+            session_start();
+            $_SESSION['admin_id'] = $admin_info['admin_id'];
+            $_SESSION['admin_email'] = $admin_info['admin_email'];
+            $_SESSION['role'] = $admin_info['role'];
+        } else {
+            $log_msg = "Email or password wrong";
+            return $log_msg;
         }
     }
+    
 
     function admin_logout()
     {
@@ -58,34 +58,35 @@ class  adminback
         }
     }
 
-    function update_admin_password($data)
-    {
+    function update_admin_password($data) {
         $u_admin_id = $data['admin_update_id'];
-        $u_admin_pass = md5($data['admin_update_password']);
-
-        $query = "UPDATE `admin_info` SET `admin_pass`='$u_admin_pass' WHERE `admin_id`= $u_admin_id";
-
-        if (mysqli_query($this->connection, $query)) {
-            $update_mag = "You password updated successfull";
-            return $update_mag;
+        $u_admin_pass = password_hash($data['admin_update_password'], PASSWORD_DEFAULT);
+    
+        $stmt = mysqli_prepare($this->connection, "UPDATE `admin_info` SET `admin_pass`=? WHERE `admin_id`=?");
+        mysqli_stmt_bind_param($stmt, "si", $u_admin_pass, $u_admin_id);
+        if (mysqli_stmt_execute($stmt)) {
+            $update_msg = "Your password was updated successfully";
+            return $update_msg;
         } else {
             return "Failed";
         }
     }
-
-    function add_admin_user($data){
+    
+    function add_admin_user($data) {
         $user_email = $data['user_name'];
-        $user_pass = md5($data['user_password']);
+        $user_pass = password_hash($data['user_password'], PASSWORD_DEFAULT);
         $user_role = $data['user_role'];
-
-        $query = "INSERT INTO `admin_info`( `admin_email`, `admin_pass`, `role`) VALUES ('$user_email','$user_pass',$user_role)";
-
-        if(mysqli_query($this->connection, $query)){
-            $msg="{$user_email} add as a user successfully";
+    
+        $stmt = mysqli_prepare($this->connection, "INSERT INTO `admin_info` (`admin_email`, `admin_pass`, `role`) VALUES (?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "ssi", $user_email, $user_pass, $user_role);
+        if (mysqli_stmt_execute($stmt)) {
+            $msg = "{$user_email} added as a user successfully";
             return $msg;
+        } else {
+            return "Failed";
         }
     }
-
+    
     function show_admin_user(){
         $query = "SELECT * FROM `admin_info`";
         if(mysqli_query($this->connection, $query)){
@@ -198,51 +199,47 @@ class  adminback
     }
 
     function add_product($data)
-{
-    $pdt_name = mysqli_real_escape_string($this->connection, $data['pdt_name']);
-    $pdt_price = mysqli_real_escape_string($this->connection, $data['pdt_price']);
-    $pdt_des = mysqli_real_escape_string($this->connection, $data['pdt_des']);
-    $pdt_stock = mysqli_real_escape_string($this->connection, $data['pdt_stock']);
-    $pdt_ctg = mysqli_real_escape_string($this->connection, $data['pdt_ctg']);
-    $pdt_status = mysqli_real_escape_string($this->connection, $data['pdt_status']);
-    $pdt_img_name = $_FILES['pdt_img']['name'];
-    $pdt_img_size = $_FILES['pdt_img']['size'];
-    $pdt_img_tmp = $_FILES['pdt_img']['tmp_name'];
-    $img_ext = pathinfo($pdt_img_name, PATHINFO_EXTENSION);
+    {
+        $pdt_name = $data['pdt_name'];
+        $pdt_price = $data['pdt_price'];
+        $pdt_des = $data['pdt_des'];
+        $pdt_stock = $data['pdt_stock'];
+        $pdt_ctg = $data['pdt_ctg'];
+        $pdt_status = $data['pdt_status'];
+        $pdt_img_name = $_FILES['pdt_img']['name'];
+        $pdt_img_size = $_FILES['pdt_img']['size'];
+        $pdt_img_tmp = $_FILES['pdt_img']['tmp_name'];
+        $img_ext = pathinfo($pdt_img_name, PATHINFO_EXTENSION);
 
-    list($width, $height) = getimagesize("$pdt_img_tmp");
+        list($width, $height) = getimagesize("$pdt_img_tmp");
 
-    if ($img_ext == "jpg" ||  $img_ext == 'jpeg' || $img_ext == "png") {
-        if ($pdt_img_size <= 2e+6) {
-
-            if ($width < 271 && $height < 271) {
-    $pdt_name = mysqli_real_escape_string($this->connection, $pdt_name);
-    $pdt_des = mysqli_real_escape_string($this->connection, $pdt_des);
-    $pdt_img_name = mysqli_real_escape_string($this->connection, $pdt_img_name);
-
-    $query = "INSERT INTO `products`( `pdt_name`, `pdt_price`, `pdt_des`,`product_stock`, `pdt_ctg`, `pdt_img`, `pdt_status`) VALUES ('$pdt_name',$pdt_price,'$pdt_des',$pdt_stock,$pdt_ctg,'$pdt_img_name',$pdt_status)";
-
-    if (mysqli_query($this->connection, $query)) {
-        move_uploaded_file($pdt_img_tmp, "uploads/".$pdt_img_name);
-        $msg = "Product uploaded successfully";
-        return $msg;
-    }
-} else {
-    $msg = "Sorry !! Pdt image max height: 271 px and width: 271 px, but you are trying {$width} px and {$height} px";
-    return $msg;
-}
+        if ($img_ext == "jpg" ||  $img_ext == 'jpeg' || $img_ext == "png") {
+            if ($pdt_img_size <= 2e+6) {
+                
+                if($width<271 && $height<271){
+                    $query = "INSERT INTO `products`( `pdt_name`, `pdt_price`, `pdt_des`,`product_stock`, `pdt_ctg`, `pdt_img`, `pdt_status`) VALUES ('$pdt_name',$pdt_price,'$pdt_des',$pdt_stock,$pdt_ctg,'$pdt_img_name',$pdt_status)";
 
 
+                    if (mysqli_query($this->connection, $query)) {
+                        move_uploaded_file($pdt_img_tmp, "uploads/".$pdt_img_name);
+                        $msg = "Product uploaded successfully";
+                        return $msg;
+                    }
+                }else{
+                    $msg = "Sorry !! Pdt image max height: 271 px and width: 271 px, but you are trying {$width} px and {$height} px";
+                    return $msg;
+                }
+
+
+            } else {
+                $msg = "File size should not be large 2MB";
+                return $msg;
+            }
         } else {
-            $msg = "File size should not be large 2MB";
+            $msg = "File shoul be jpg or png formate";
             return $msg;
         }
-    } else {
-        $msg = "File should be jpg or png format";
-        return $msg;
     }
-}
-
 
     function display_product()
     {
@@ -392,63 +389,64 @@ class  adminback
 
     function user_register($data)
     {
-        $username = $data['username'];
-        $user_firstname = $data['user_firstname'];
-        $user_lastname = $data['user_lastname'];
-        $user_email = $data['user_email'];
-        $user_password = md5($data['user_password']);
-        $user_mobile = $data['user_mobile'];
-        $user_address = $data['user_address'];
-        $user_roles = $data['user_roles'];
-
-
+        $username = sanitize_input($data['username']);
+        $user_firstname = sanitize_input($data['user_firstname']);
+        $user_lastname = sanitize_input($data['user_lastname']);
+        $user_email = sanitize_input($data['user_email']);
+        $user_password = md5(sanitize_input($data['user_password']));
+        $user_mobile = sanitize_input($data['user_mobile']);
+        $user_address = sanitize_input($data['user_address']);
+        $user_roles = sanitize_input($data['user_roles']);
+    
         $user_check = "SELECT * FROM `users` WHERE user_name='$username' or user_email='$user_email'";
-
         $mysqli_result = mysqli_query($this->connection, $user_check);
-
         $row = mysqli_num_rows($mysqli_result);
-
+    
         if ($row == 1) {
             $msg = "Username or email already exist";
             return $msg;
         } else {
-            $query = "INSERT INTO `users`( `user_name`, `user_firstname`, `user_lastname`, `user_email`, `user_password`, `user_mobile`,`user_address`, `user_roles`) VALUES ('$username',' $user_firstname',' $user_lastname','$user_email','$user_password',$user_mobile,'$user_address',$user_roles)";
-
+            $query = "INSERT INTO `users`(`user_name`, `user_firstname`, `user_lastname`, `user_email`, `user_password`, `user_mobile`, `user_address`, `user_roles`) VALUES ('$username','$user_firstname','$user_lastname','$user_email','$user_password','$user_mobile','$user_address','$user_roles')";
+    
             if (mysqli_query($this->connection, $query)) {
                 $msg = "Your registration done";
                 return $msg;
             }
         }
     }
+    
+    function corrected_input($input) {
+        $input = trim($input);
+        $input = stripslashes($input);
+        $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
+        return $input;
+    }
+    
 
 
     function user_login($data)
     {
-        $user_email = $_POST['user_email'];
-        $user_password = $_POST['user_password'];
-
-        $query = "SELECT * FROM `users` WHERE `user_email`=? AND `user_password`=?";
-
-        if ($stmt = mysqli_prepare($this->connection, $query)) {
-            mysqli_stmt_bind_param($stmt, "ss", $user_email, $user_password);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-            $user_info = mysqli_fetch_array($result);
-            if ($user_info) {
-                header("location:userprofile.php");
+        $user_email = mysqli_real_escape_string($this->connection, $data['user_email']);
+        $user_password = md5(mysqli_real_escape_string($this->connection, $data['user_password']));
+    
+        $query = "SELECT * FROM `users` WHERE `user_email`='$user_email' AND `user_password`='$user_password'";
+    
+        if ($result = mysqli_query($this->connection, $query)) {
+            if ($user_info = mysqli_fetch_assoc($result)) {
                 session_start();
                 $_SESSION['user_id'] = $user_info['user_id'];
                 $_SESSION['email'] = $user_info['user_email'];
                 $_SESSION['mobile'] = $user_info['user_mobile'];
                 $_SESSION['address'] = $user_info['user_address'];
-
                 $_SESSION['username'] = $user_info['user_name'];
+                header("location:userprofile.php");
             } else {
-                $logmsg = "Your username or password is incorrect";
+                $logmsg = "Your email or password is incorrect";
                 return $logmsg;
             }
         }
     }
+    
 
     function user_logout()
     {
@@ -510,30 +508,27 @@ class  adminback
     }
 
     function place_order($data)
-{
-    $connection = $this->connection;
-    $user_id = filter_var($data['user_id'], FILTER_SANITIZE_NUMBER_INT);
-    $product_name = filter_var($data['product_name'], FILTER_SANITIZE_STRING);
-    $product_item = filter_var($data['product_item'], FILTER_SANITIZE_NUMBER_INT);
-    $quantity = filter_var($data['quan'], FILTER_SANITIZE_NUMBER_INT);
-    $amount = filter_var($data['amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-    $order_status = filter_var($data['order_status'], FILTER_SANITIZE_NUMBER_INT);
-    $trans_id = filter_var($data['txid'], FILTER_SANITIZE_STRING);
-    $mobile = filter_var($data['shipping_Mobile'], FILTER_SANITIZE_STRING);
-    $shiping = filter_var($data['shiping'], FILTER_SANITIZE_STRING);
+    {
+        $user_id = $data['user_id'];
+        $product_name = $data['product_name'];
+        $product_item = $data['product_item'];
+        $quantity = $data['quan'];
+        $amount = $data['amount'];
+        $order_status = $data['order_status'];
+        $trans_id = $data['txid'];
+        $mobile = $data['shipping_Mobile'];
 
-    $query = "INSERT INTO `order_details`(`user_id`, `product_name`, `product_item`, `amount`, `order_status`, `trans_id`,`Shipping_mobile`, `shiping`, `order_time`, `order_date`) VALUES ( ?,'?',?, ?,'?','?','?',"
-             . "?,NOW(), CURDATE())";
-    $stmt = mysqli_prepare($connection, $query);
-    mysqli_stmt_bind_param($stmt, 'isissss', $user_id, $product_name, $product_item, $amount, $order_status, $trans_id, $mobile, $shiping);
-    if (mysqli_stmt_execute($stmt)) {
-        unset($_SESSION['cart']);
-        header("Location: exist_order.php");
-        exit;
+        $shiping = $data['shiping'];
+
+
+        $query = "INSERT INTO `order_details`(`user_id`, `product_name`, `product_item`, `amount`, `order_status`, `trans_id`,`Shipping_mobile`, `shiping`, `order_time`, `order_date`) VALUES ( $user_id,'$product_name',$product_item, $amount, $order_status,'$trans_id',$mobile,'$shiping',NOW(), CURDATE())";
+
+        if (mysqli_query($this->connection, $query)) {
+
+            unset($_SESSION['cart']);
+            header("location:exist_order.php");
+        }
     }
-}
-
-
 
     function confirm_order($post, $session){
         $user_id = $post['user_id'];
@@ -599,23 +594,19 @@ class  adminback
     }
 
     function update_user_password($data)
-    {
+{
+    $update_id = (int)$data['update_user_id'];
+    $update_password = md5($data['update_user_password']);
 
-        $update_id = $data['update_user_id'];
-        $update_password = md5($data['update_user_password']);
+    $query = "UPDATE `users` SET `user_password`='$update_password' WHERE `user_id`=$update_id";
 
-        // echo $update_id.$update_password;
-
-        $query = "UPDATE `users` SET `user_password`='$update_password' WHERE `user_id`=$update_id";
-
-
-        if (mysqli_query($this->connection, $query)) {
-            $update_mag = "You password updated successfull";
-            return $update_mag;
-        } else {
-            return "Please enter a correct email";
-        }
+    if (mysqli_query($this->connection, $query)) {
+        $update_mag = "Your password was updated successfully";
+        return $update_mag;
+    } else {
+        return "Failed to update password";
     }
+}
 
 
     function display_links()
@@ -740,39 +731,36 @@ class  adminback
     }
 
     function slider_update($data){
-        $slide_id = (int)filter_input(INPUT_POST, 'slider_id', FILTER_SANITIZE_NUMBER_INT);
-        $first_line = filter_input(INPUT_POST, 'first_line', FILTER_SANITIZE_STRING);
-        $second_line = filter_input(INPUT_POST, 'second_line', FILTER_SANITIZE_STRING);
-        $third_line = filter_input(INPUT_POST, 'third_line', FILTER_SANITIZE_STRING);
-        $btn_left = filter_input(INPUT_POST, 'btn_left', FILTER_SANITIZE_STRING);
-        $btn_right = filter_input(INPUT_POST, 'btn_right', FILTER_SANITIZE_STRING);
+        $slide_id = $data['slider_id'];
+        $first_line = $data['first_line'];
+        $second_line = $data['second_line'];
+        $third_line = $data['third_line'];
+        $btn_left = $data['btn_left'];
+        $btn_right = $data['btn_right'];
         
         $lg_name = $_FILES['slider_img']['name'];
         $lg_size = $_FILES['slider_img']['size'];
         $lg_tmp = $_FILES['slider_img']['tmp_name'];
         $lg_ext = pathinfo($lg_name, PATHINFO_EXTENSION);
-        $allowed_extensions = array("jpg", "jpeg", "png");
-        
-        if (in_array($lg_ext, $allowed_extensions)) {
+
+        list($width, $height) = getimagesize("$lg_tmp");
+
+
+        if ($lg_ext == "jpg" ||   $lg_ext == 'jpeg' ||  $lg_ext == "png") {
             if ($lg_size <= 2e+6) {
-                list($width, $height) = getimagesize("$lg_tmp");
 
                 if ($width == 1920 && $height == 550) {
 
-                    $select_query = "SELECT * FROM `slider` WHERE `slider_id`=?";
-                    $stmt = mysqli_prepare($this->connection, $select_query);
-                    mysqli_stmt_bind_param($stmt, "i", $slide_id);
-                    mysqli_stmt_execute($stmt);
-                    $result = mysqli_stmt_get_result($stmt);
+                    $select_query = "SELECT * FROM `slider` WHERE `slider_id`=$slide_id";
+                    $result = mysqli_query($this->connection, $select_query);
                     $row = mysqli_fetch_assoc($result);
                     $pre_img = $row['img'];
                     unlink("uploads/".$pre_img);
-                    
-                    $query = "UPDATE `slider` SET `first_line`=?,`second_line`=?,`third_line`=?,`btn_left`=?,`btn_right`=?,`slider_img`=? WHERE `slider_id`=?";
 
-                    $stmt = mysqli_prepare($this->connection, $query);
-                    mysqli_stmt_bind_param($stmt, "ssssssi", $first_line, $second_line, $third_line, $btn_left, $btn_right, $lg_name, $slide_id);
-                    if (mysqli_stmt_execute($stmt)) {
+
+                    $query = "UPDATE `slider` SET `first_line`='$first_line',`second_line`='$second_line',`third_line`='$third_line',`btn_left`='$btn_left',`btn_right`='$btn_right',`slider_img`='$lg_name ' WHERE `slider_id`=$slide_id";
+
+                    if (mysqli_query($this->connection, $query)) {
                         move_uploaded_file($lg_tmp, "uploads/" . $lg_name);
                         $msg = "Slider  Updated successfully";
                         return $msg;
