@@ -216,22 +216,21 @@ class  adminback
         if ($pdt_img_size <= 2e+6) {
 
             if ($width < 271 && $height < 271) {
-                $pdt_name = mysqli_real_escape_string($this->connection, $pdt_name);
-                $pdt_des = mysqli_real_escape_string($this->connection, $pdt_des);
-                $pdt_img_name = mysqli_real_escape_string($this->connection, $pdt_img_name);
-            
-                $query = "INSERT INTO `products`( `pdt_name`, `pdt_price`, `pdt_des`,`product_stock`, `pdt_ctg`, `pdt_img`, `pdt_status`) VALUES ('$pdt_name',$pdt_price,'$pdt_des',$pdt_stock,$pdt_ctg,'$pdt_img_name',$pdt_status)";
-            
-                if (mysqli_query($this->connection, $query)) {
-                    move_uploaded_file($pdt_img_tmp, "uploads/".$pdt_img_name);
-                    $msg = "Product uploaded successfully";
-                    return $msg;
-                }
-            } else {
-                $msg = "Sorry !! Pdt image max height: 271 px and width: 271 px, but you are trying {$width} px and {$height} px";
-                return $msg;
-            }
-            
+    $pdt_name = mysqli_real_escape_string($this->connection, $pdt_name);
+    $pdt_des = mysqli_real_escape_string($this->connection, $pdt_des);
+    $pdt_img_name = mysqli_real_escape_string($this->connection, $pdt_img_name);
+
+    $query = "INSERT INTO `products`( `pdt_name`, `pdt_price`, `pdt_des`,`product_stock`, `pdt_ctg`, `pdt_img`, `pdt_status`) VALUES ('$pdt_name',$pdt_price,'$pdt_des',$pdt_stock,$pdt_ctg,'$pdt_img_name',$pdt_status)";
+
+    if (mysqli_query($this->connection, $query)) {
+        move_uploaded_file($pdt_img_tmp, "uploads/".$pdt_img_name);
+        $msg = "Product uploaded successfully";
+        return $msg;
+    }
+} else {
+    $msg = "Sorry !! Pdt image max height: 271 px and width: 271 px, but you are trying {$width} px and {$height} px";
+    return $msg;
+}
 
 
         } else {
