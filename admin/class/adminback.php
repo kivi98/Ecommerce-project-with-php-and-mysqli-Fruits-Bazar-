@@ -421,12 +421,14 @@ class  adminback
     function user_login($data)
     {
         $user_email = $_POST['user_email'];
-        $user_password = md5($_POST['user_password']);
+        $user_password = $_POST['user_password'];
 
-        $query = "SELECT * FROM `users` WHERE `user_email`='$user_email' AND `user_password`='$user_password'";
+        $query = "SELECT * FROM `users` WHERE `user_email`=? AND `user_password`=?";
 
-        if (mysqli_query($this->connection, $query)) {
-            $result = mysqli_query($this->connection, $query);
+        if ($stmt = mysqli_prepare($this->connection, $query)) {
+            mysqli_stmt_bind_param($stmt, "ss", $user_email, $user_password);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
             $user_info = mysqli_fetch_array($result);
             if ($user_info) {
                 header("location:userprofile.php");

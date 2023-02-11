@@ -18,66 +18,59 @@
             $query = "SELECT * FROM `product_info_ctg` WHERE ctg_id=$cataId AND pdt_status=1";
 
            
-           if(mysqli_query($connection, $query)){
+            if ($stmt = mysqli_prepare($connection, "SELECT pdt_id, pdt_name FROM products")) {
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_bind_result($stmt, $pdt_id, $pdt_name);
                 $html = '';
-                $pdt_result = mysqli_query($connection, $query);
-
-                foreach($pdt_result as $pdt_name){
-                      $html .= '<option value="'.$pdt_name['pdt_id'].'">'.$pdt_name['pdt_name'].'</option>';
+                while (mysqli_stmt_fetch($stmt)) {
+                    $html .= '<option value="'.$pdt_id.'">'.$pdt_name.'</option>';
                 }
                 echo $html;
-          
-           }
+                mysqli_stmt_close($stmt);
+            }
         }
     }
 
 
 
 
-    if(isset($_POST['action'])){
-        if($_POST['action']=='load_price'){
-            $pId= $_POST['pid'];
-            $pricequery = "SELECT * FROM `product_info_ctg` WHERE `pdt_id`=$pId AND pdt_status=1";
+    if(isset($_POST['action']) && $_POST['action']=='load_price'){
+        $pId = intval($_POST['pid']);
+        $pricequery = "SELECT `pdt_price` FROM `product_info_ctg` WHERE `pdt_id`=? AND `pdt_status`=1";
 
-           
-           if(mysqli_query($connection, $pricequery)){
-                $pricehtml = '';
-                $price_result = mysqli_query($connection, $pricequery);
+        $stmt = mysqli_prepare($connection, $pricequery);
+        mysqli_stmt_bind_param($stmt, "i", $pId);
+        mysqli_stmt_execute($stmt);
+        $price_result = mysqli_stmt_get_result($stmt);
 
-                foreach($price_result as $price){
-                      $pricehtml .= $price["pdt_price"];
-
-                      
-                }
-                echo $pricehtml;
-          
-           }
+        if ($price = mysqli_fetch_array($price_result, MYSQLI_ASSOC)) {
+            echo $price["pdt_price"];
         }
     }
+
 
 
     if(isset($_POST['action'])){
         if($_POST['action']=='total_price'){
-           $pdtId= $_POST['pdt_id'];
+            $pdtId = $_POST['pdt_id'];
             $quantity = $_POST['quantity'];
-
-            $singlepricequery = "SELECT * FROM `product_info_ctg` WHERE `pdt_id`=$pdtId AND pdt_status=1";
-
-           
-           if(mysqli_query($connection, $singlepricequery)){
-                $single_price = '';
-                $prices_res = mysqli_query($connection, $singlepricequery);
-
-                foreach($prices_res as $sl_price){
-                      $single_price .= $sl_price["pdt_price"];
-
-                      
-                }
-                echo $single_price*$quantity;
-          
-           }
+    
+            $singlepricequery = "SELECT pdt_price FROM `product_info_ctg` WHERE `pdt_id`=? AND pdt_status=1";
+    
+            $stmt = mysqli_prepare($connection, $singlepricequery);
+            mysqli_stmt_bind_param($stmt, "i", $pdtId);
+            mysqli_stmt_execute($stmt);
+            $prices_res = mysqli_stmt_get_result($stmt);
+    
+            if ($price_row = mysqli_fetch_array($prices_res)) {
+                $single_price = $price_row["pdt_price"];
+                echo $single_price * $quantity;
+            } else {
+                echo "Product not found";
+            }
         }
     }
+    
 
 ?>
 
